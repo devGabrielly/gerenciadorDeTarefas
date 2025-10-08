@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "es6" /* Define a versão do JavaScript para a qual o código será compilado. */,
+    "module": "commonjs" /* Define o sistema de módulos (padrão para Node.js). */,
+    "rootDir": "./src" /* A pasta raiz do seu código TypeScript. */,
+    "outDir": "./dist" /* A pasta onde o código JavaScript compilado será salvo. */,
+    "esModuleInterop": true /* Permite melhor compatibilidade entre módulos CommonJS e ES Modules. */,
+    "strict": true /* Habilita todas as checagens estritas de tipos. */,
+    "skipLibCheck": true /* Pula a verificação de tipos em arquivos de declaração (.d.ts). */
+  },
+  "include": [
+    "src/**/*.ts" /* Diz ao TypeScript para incluir todos os arquivos .ts dentro da pasta src. */
+  ],
+  "exclude": [
+    "node_modules" /* Ignora a pasta node_modules. */,
+    "client" /* Ignora a pasta do frontend. */
+  ]
+}

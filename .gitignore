@@ -1,0 +1,8 @@
+# Dependências (pasta muito grande)
+node_modules/
+
+# Arquivo de senhas e segredos
+.env
+
+# Pasta com o código compilado do TypeScript
+dist/
