@@ -8,8 +8,23 @@ interface AuthRequest extends Request {
 export const getTasks = async (req: AuthRequest, res: Response) => {
     try {
         const task = await Task.find({userId: req.user.id}) .sort({createdAt: -1});
-        res.status(200).json(tasks);
+        res.status(200).json(task);
     } catch (error) {
         res.status(500).json({message: "Erro ao buscar terefas."});
+    }
+};
+
+export const createTask = async (req: AuthRequest, res: Response) => {
+    const {title} = req.body;
+    if (!title) {
+        return res.status(400).json({message: "O título é obrigatório."})
+    }
+    try {
+        const task = await Task.create({
+            user: req.user.id, title,
+        });
+        res.status(201).json(task);
+    } catch (error) {
+        res.status(500).json({message: "Erro ao criar tarefa."});
     }
 };
