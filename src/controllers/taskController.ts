@@ -50,3 +50,21 @@ export const updateTask = async (req: AuthRequest, res: Response) => {
         res.status(500).json({message: "Erro ao atualizar tarefa."});
     }
 };
+
+export const deleteTask = async (req: AuthRequest, res: Response) => {
+    try {
+        const task = await Task.findById(req.params.id);
+        if (!task) {
+            return res.status(404).json({message: "Tarefa não encontrada."});
+        }
+
+        if (task.user.toString() !== req.user._id.toString()) {
+            return res.status(401).json({message: "Usuário não autorizado."});
+        }
+
+        await task.deleteOne({_id: req.params.id});
+        res.status(200).json({_id: req.params.id, message: "Tarefa excluída com sucesso!"});
+    } catch (error) {
+        res.status(500).json({message: "Erro ao excluir tarefa."});
+    }
+};
