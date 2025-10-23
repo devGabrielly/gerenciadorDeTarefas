@@ -1,4 +1,6 @@
-const { Schema, model } = require("mongoose");
+// Correção do TS para utilizaçaõ do ES Modules (import/export)
+
+import { Schema, model } from "mongoose";
 
 const taskSchema = new Schema(
   {
@@ -9,6 +11,6 @@ const taskSchema = new Schema(
   { timestamps: true }
 );
 
-const Task = model("Task", taskSchema);
+export const Task = model("Task", taskSchema);
 
 module.exports = { Task };
