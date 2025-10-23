@@ -5,34 +5,32 @@ import dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "./config/database";
 import authRoutes from "./routes/authRoutes";
+import taskRoutes from "./routes/taskRoutes";
 
-// Carrega as variáveis de ambiente do arquivo .env
 dotenv.config();
 
-// Executa a função para conectar ao banco de dados
 connectDB();
 
-// Cria a instância do servidor Express
 const app = express();
 
-// Middlewares: Funções que rodam em toda requisição
-app.use(cors()); // Habilita o CORS para o frontend poder acessar a API
-app.use(express.json()); // Habilita o servidor a entender JSON no corpo das requisições
+// Middlewares
+app.use(cors());
+app.use(express.json());
 
 // Rota de teste para verificar se o servidor está funcionando
 app.get("/", (req: Request, res: Response) => {
   res.send("API do Gerenciador de Tarefas está no ar!");
 });
 
-// Usa as rotas de autenticação
-// Todas as rotas em authRoutes serão prefixadas com /api/auth
+//  rotas de autenticação
 app.use("/api/auth", authRoutes);
 
-// ... Futuramente, as rotas de TAREFAS serão adicionadas aqui ...
+// rotas de tarefas
+app.use("/api/tasks", taskRoutes);
 
 const PORT = process.env.PORT || 5000;
 
-// Inicia o servidor para "escutar" por requisições na porta especificada
+// Inicia o servidor
 app.listen(PORT, () =>
   console.log(`Backend: Servidor rodando na porta ${PORT}`)
 );
