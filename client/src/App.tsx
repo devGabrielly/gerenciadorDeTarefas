@@ -1,25 +1,30 @@
+// client/src/App.tsx
 import React from "react";
-import logo from "./logo.svg";
-import "./App.scss";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
+// Importe as páginas que acabamos de criar
+import Dashboard from "./pages/dashboard";
+import Login from "./pages/login";
+import Register from "./pages/register";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> DEU CERTO MANA.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Router>
+        <div>
+          <Routes>
+            {/* Quando a URL for "/", exiba o Dashboard */}
+            <Route path="/" element={<Dashboard />} />
+
+            {/* Quando a URL for "/login", exiba a página de Login */}
+            <Route path="/login" element={<Login />} />
+
+            {/* Quando a URL for "/register", exiba a página de Cadastro */}
+            <Route path="/register" element={<Register />} />
+          </Routes>
+        </div>
+      </Router>
+    </>
   );
 }
 
