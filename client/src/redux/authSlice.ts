@@ -1,7 +1,7 @@
 // (O Cérebro da Autenticação)
 
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-// Precisaremos de um serviço para fazer as chamadas de API, criaremos depois
+import authService from "../services/authService"; // Serviço para chamadas de API
 
 // Tenta pegar o usuário do localStorage (se ele já logou antes)
 const user = JSON.parse(localStorage.getItem("user") || "null");
@@ -22,8 +22,36 @@ const initialState: AuthState = {
   message: "",
 };
 
-// (Aqui é onde vamos adicionar as funções createAsyncThunk para login e registro)
-// (Por enquanto, vamos focar na estrutura)
+export const register = createAsyncThunk( // Para registro
+  "auth/register", // Nome da ação
+  async (user: any, thunkAPI) => {
+    try {
+      return await authService.register(user);
+    } catch (error: any) {
+      const message = error.response?.data?.message || error.message || error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const login = createAsyncThunk( // Para login
+  "auth/login", 
+  async (user: any, thunkAPI) => {
+    try {
+      return await authService.login(user);
+    } catch (error: any) {
+      const message = error.response?.data?.message || error.message || error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const logout = createAsyncThunk( // Para logout
+  "auth/logout",
+  async () => {
+    await authService.logout();
+  }
+);
 
 export const authSlice = createSlice({
   name: "auth",
