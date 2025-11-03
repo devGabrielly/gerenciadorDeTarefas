@@ -20,8 +20,11 @@
   "homepage": "https://github.com/devGabrielly/gerenciadorDeTarefas#readme",
   "dependencies": {
     "@reduxjs/toolkit": "^2.9.2",
+<<<<<<< Updated upstream
     "@types/react-dom": "^19.2.2",
     "axios": "^1.13.1",
+=======
+>>>>>>> Stashed changes
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
@@ -29,8 +32,12 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.20.0",
     "mongoose": "^8.19.1",
+<<<<<<< Updated upstream
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.9.5"
+=======
+    "react-redux": "^9.2.0"
+>>>>>>> Stashed changes
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
