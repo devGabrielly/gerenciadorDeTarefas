@@ -17,3 +17,15 @@ const login = async (userData: any) => { // Função de login do usuário
     }
     return response.data;
 };
+
+const logout = () => {
+    localStorage.removeItem("user"); // Função de logout do usuário
+};
+
+const authService = {
+    register,
+    logout,
+    login,
+}; 
+
+export default authService;
