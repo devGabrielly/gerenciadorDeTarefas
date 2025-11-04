@@ -2,6 +2,7 @@
 
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import authService from "../services/authService"; // Serviço para chamadas de API
+import { stat } from "fs";
 
 // Tenta pegar o usuário do localStorage (se ele já logou antes)
 const user = JSON.parse(localStorage.getItem("user") || "null");
@@ -63,12 +64,43 @@ export const authSlice = createSlice({
       state.isSuccess = false;
       state.isError = false;
       state.message = "";
-    },
+    }
   },
+
   extraReducers: (builder) => {
-    // Lógica para quando o login estiver pendente, completo ou rejeitado
-    // builder.addCase(login.pending, (state) => { ... })
-  },
+    builder
+      .addCase(register.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(register.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.user = action.payload; // Armazena o usuário
+      })
+      .addCase(register.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload as string; // Armazena mensagem de erro
+        state.user = null; // Limpa o usuário em caso de falha
+      })
+      .addCase(login.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(login.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.user = action.payload; 
+      })
+      .addCase(login.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload as string; 
+        state.user = null; 
+      })
+      .addCase(logout.fulfilled, (state) => {
+        state.user = null;
+      });
+  }
 });
 
 export const { reset } = authSlice.actions;
