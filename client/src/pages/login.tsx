@@ -22,29 +22,20 @@ const Login = () => {
     (state: RootState) => state.auth
   );
 
-  // --- ESTA É A LÓGICA CORRIGIDA ---
   useEffect(() => {
-    // Não precisamos do alert() aqui
-
-    // Se o login der certo, navegue
     if (isSuccess || user) {
       navigate("/");
     }
 
-    // Agora, o reset() só acontece quando o componente "morre" (quando saímos da pág)
     return () => {
       dispatch(reset());
     };
-  }, [user, isSuccess, navigate, dispatch]); // Removido 'isError' e 'message' das dependências
-  // --- FIM DA CORREÇÃO ---
+  }, [user, isSuccess, navigate, dispatch]);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // --- ADICIONADO ---
-    // Se o usuário começar a digitar, limpe os erros antigos
     if (isError) {
       dispatch(reset());
     }
-    // --- FIM DA ADIÇÃO ---
     setFormData((prevState) => ({
       ...prevState,
       [e.target.name]: e.target.value,
