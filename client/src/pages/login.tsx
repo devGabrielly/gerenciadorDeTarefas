@@ -1,9 +1,10 @@
+// client/src/pages/Login.tsx
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate, Link } from "react-router-dom"; // Importe o Link
+import { useNavigate, Link } from "react-router-dom";
 import { login, reset } from "../redux/authSlice";
 import { RootState, AppDispatch } from "../redux/store";
-import "../styles/LoginRegister.scss"; // <-- IMPORTAÇÃO DO NOVO ESTILO
+import "../styles/LoginRegister.scss";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -12,6 +13,8 @@ const Login = () => {
   });
   const { email, password } = formData;
 
+  const [showPassword, setShowPassword] = useState(false);
+
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
@@ -19,17 +22,29 @@ const Login = () => {
     (state: RootState) => state.auth
   );
 
+  // --- ESTA É A LÓGICA CORRIGIDA ---
   useEffect(() => {
-    if (isError) {
-      alert(message);
-    }
+    // Não precisamos do alert() aqui
+
+    // Se o login der certo, navegue
     if (isSuccess || user) {
-      navigate("/"); // Redireciona para o Dashboard
+      navigate("/");
     }
-    dispatch(reset());
-  }, [user, isError, isSuccess, message, navigate, dispatch]);
+
+    // Agora, o reset() só acontece quando o componente "morre" (quando saímos da pág)
+    return () => {
+      dispatch(reset());
+    };
+  }, [user, isSuccess, navigate, dispatch]); // Removido 'isError' e 'message' das dependências
+  // --- FIM DA CORREÇÃO ---
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // --- ADICIONADO ---
+    // Se o usuário começar a digitar, limpe os erros antigos
+    if (isError) {
+      dispatch(reset());
+    }
+    // --- FIM DA ADIÇÃO ---
     setFormData((prevState) => ({
       ...prevState,
       [e.target.name]: e.target.value,
@@ -43,18 +58,16 @@ const Login = () => {
   };
 
   if (isLoading) {
-    return <h2>Carregando...</h2>; // Você pode substituir por um componente Spinner
+    return <h2>Carregando...</h2>;
   }
 
   return (
     <div className="auth-container">
       <div className="auth-box">
-        {/* Painel do Formulário (Lado Direito) */}
         <div className="form-panel">
           <div className="form-heading">
             <h1>Entrar</h1>
           </div>
-
           <form onSubmit={onSubmit}>
             <div className="form-group">
               <input
@@ -67,9 +80,9 @@ const Login = () => {
                 required
               />
             </div>
-            <div className="form-group">
+            <div className="form-group password-wrapper">
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 id="password"
                 name="password"
                 value={password}
@@ -77,7 +90,18 @@ const Login = () => {
                 onChange={onChange}
                 required
               />
+              <span
+                className="password-toggle"
+                onClick={() => setShowPassword((prev) => !prev)}
+              >
+                {showPassword ? "Ocultar" : "Mostrar"}
+              </span>
             </div>
+            {isError && (
+              <div className="form-error-message">
+                <p>{message}</p>
+              </div>
+            )}
             <div className="form-group">
               <button type="submit" className="btn-submit">
                 Entrar
@@ -85,15 +109,12 @@ const Login = () => {
             </div>
           </form>
         </div>
-
-        {/* Painel Lateral Colorido (Lado Esquerdo) */}
         <div className="auth-panel">
-          <h1>Olá, Seja Bem Vindo!</h1>
+          <h1>Olá, Amigo!</h1>
           <p>
             Ainda não tem uma conta? Cadastre-se e comece a organizar suas
             tarefas!
           </p>
-          {/* O Link do React Router funciona como um <a> */}
           <Link to="/register">
             <button className="btn-panel">Cadastrar-se</button>
           </Link>
