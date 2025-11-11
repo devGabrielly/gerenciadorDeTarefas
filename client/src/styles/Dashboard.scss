@@ -1,0 +1,196 @@
+$bg-color: #f7f8fc;
+$sidebar-bg: #ffffff;
+$navbar-bg: #ffffff;
+$widget-bg: #ffffff;
+$text-color: #333;
+$text-color-light: #888;
+$highlight-color: #4a90e2;
+$border-color: #ebebeb;
+
+/* --- Layout Principal --- */
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: $bg-color;
+  font-family: Arial, sans-serif;
+}
+
+/* --- 1. Barra Lateral (Sidebar) --- */
+.sidebar {
+  width: 250px;
+  background-color: $sidebar-bg;
+  border-right: 1px solid $border-color;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+
+  .sidebar-logo {
+    font-size: 1.8rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 2.5rem;
+    padding: 10px;
+    background-color: $bg-color;
+    border-radius: 8px;
+  }
+
+  .sidebar-nav {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    li {
+      margin-bottom: 0.9rem;
+      a {
+        color: $text-color-light;
+        font-weight: 500;
+        text-decoration: none;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        padding: 14px 20px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        &.active {
+          color: $highlight-color;
+          background-color: #fff0e6;
+          border-right: 4px solid $highlight-color;
+        }
+        &:hover {
+          background-color: $bg-color;
+          color: $text-color;
+        }
+      }
+    }
+  }
+
+  .sidebar-footer {
+    margin-top: auto;
+    list-style-type: none;
+    padding: 0;
+    li {
+      margin-bottom: 0.5rem;
+      a {
+        color: $text-color-light;
+        font-weight: 500;
+        text-decoration: none;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        padding: 14px 20px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        &.active {
+          color: $highlight-color;
+          background-color: #fff0e6;
+          border-right: 4px solid $highlight-color;
+        }
+        &:hover {
+          background-color: $bg-color;
+          color: $text-color;
+        }
+      }
+    }
+  }
+}
+
+/* ---  Conteúdo Principal (Direita) --- */
+.main-content {
+  flex: 1;
+  padding: 1.5rem 2.5rem;
+  overflow-y: auto;
+}
+
+/* --- Cabeçalho (Topo) --- */
+.header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 2rem;
+  background-color: $widget-bg;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+
+  .search-bar {
+    input {
+      width: 300px;
+      padding: 10px 15px;
+      border: 1px solid $border-color;
+      border-radius: 25px;
+      font-size: 0.9rem;
+      &:focus {
+        outline: none;
+        border-color: $highlight-color;
+      }
+    }
+  }
+  .user-info {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    .notification-icon {
+      font-size: 1.4rem;
+      color: $text-color-light;
+      cursor: pointer;
+    }
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: $highlight-color;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  }
+}
+
+/* ---  Estilos do Menu --- */
+.menu-dropdown {
+  position: absolute;
+  top: 120%;
+  right: 0;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  width: 200px;
+  padding: 0.5rem;
+  z-index: 50;
+  .menu-item {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    color: #333;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    &:hover {
+      background-color: #f4f7f6;
+      color: $highlight-color;
+    }
+  }
+}
+
+/* ---  O "Widget" principal (Tarefas) --- */
+.main-widget {
+  background-color: $widget-bg;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+
+  h3 {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    font-size: 1.2rem;
+  }
+}

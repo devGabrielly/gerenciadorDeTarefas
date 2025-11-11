@@ -1,13 +1,8 @@
-// src/server.ts
-
 import express, { Request, Response } from "express";
-import dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "./config/database";
 import authRoutes from "./routes/authRoutes";
 import taskRoutes from "./routes/taskRoutes";
-
-dotenv.config();
 
 connectDB();
 
