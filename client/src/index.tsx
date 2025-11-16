@@ -1,6 +1,6 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
-import "./index.scss";
+import "./styles/index.scss";
 import App from "./App";
 import { store } from "./redux/store";
 import { Provider } from "react-redux";
@@ -10,7 +10,6 @@ if (rootElement) {
   const root = createRoot(rootElement);
   root.render(
     <React.StrictMode>
-      {/* 3. Envolva o App com o Provider */}
       <Provider store={store}>
         <App />
       </Provider>

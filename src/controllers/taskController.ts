@@ -5,17 +5,22 @@ interface AuthRequest extends Request {
   user?: any;
 }
 
+// 1. Função GETTASKS
 export const getTasks = async (req: AuthRequest, res: Response) => {
   try {
-    const task = await Task.find({ user: req.user.id }).sort({ createdAt: -1 });
-    res.status(200).json(task);
+    const tasks = await Task.find({ user: req.user.id }).sort({
+      createdAt: -1,
+    });
+    res.status(200).json(tasks);
   } catch (error) {
     res.status(500).json({ message: "Erro ao buscar tarefas." });
   }
 };
 
+// 2. Função CREATETASK
 export const createTask = async (req: AuthRequest, res: Response) => {
-  const { title } = req.body;
+  const { title, description, deadline, priority } = req.body;
+
   if (!title) {
     return res.status(400).json({ message: "O título é obrigatório." });
   }
@@ -23,6 +28,9 @@ export const createTask = async (req: AuthRequest, res: Response) => {
     const task = await Task.create({
       user: req.user.id,
       title,
+      description: description || "",
+      deadline,
+      priority: priority || "normal",
     });
     res.status(201).json(task);
   } catch (error) {
@@ -30,6 +38,7 @@ export const createTask = async (req: AuthRequest, res: Response) => {
   }
 };
 
+// 3. Função UPDATETASK
 export const updateTask = async (req: AuthRequest, res: Response) => {
   try {
     const task = await Task.findById(req.params.id);
@@ -41,15 +50,16 @@ export const updateTask = async (req: AuthRequest, res: Response) => {
       return res.status(401).json({ message: "Usuário não autorizado." });
     }
 
-    const updateTask = await Task.findByIdAndUpdate(req.params.id, req.body, {
+    const updatedTask = await Task.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
     });
-    res.status(200).json(updateTask);
+    res.status(200).json(updatedTask);
   } catch (error) {
     res.status(500).json({ message: "Erro ao atualizar tarefa." });
   }
 };
 
+// 4. Função DELETETASK
 export const deleteTask = async (req: AuthRequest, res: Response) => {
   try {
     const task = await Task.findById(req.params.id);

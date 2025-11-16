@@ -1,29 +1,48 @@
-// client/src/App.tsx
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-// Importe as páginas que acabamos de criar
+import Layout from "./components/Layout";
+
+// Páginas
 import Dashboard from "./pages/dashboard";
 import Login from "./pages/login";
 import Register from "./pages/register";
+import MyTasks from "./pages/MyTasks";
 
 function App() {
   return (
     <>
+           {" "}
       <Router>
+               {" "}
         <div>
+                   {" "}
           <Routes>
-            {/* Quando a URL for "/", exiba o Dashboard */}
-            <Route path="/" element={<Dashboard />} />
-
-            {/* Quando a URL for "/login", exiba a página de Login */}
-            <Route path="/login" element={<Login />} />
-
-            {/* Quando a URL for "/register", exiba a página de Cadastro */}
-            <Route path="/register" element={<Register />} />
+                       {" "}
+            {/* Rotas Públicas (Login/Registo não têm a barra lateral) */}
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/register" element={<Register />} />       
+               {" "}
+            {/* <Route path='/forgot-password' element={<ForgotPassword />} /> */}
+                       {" "}
+            {/* Rotas Protegidas (Todas usam o Layout como "pai") */}           {" "}
+            <Route path="/" element={<Layout />}>
+              {/* A rota "index" (/) renderiza o Dashboard DENTRO do Layout */}
+                V            <Route index element={<Dashboard />} />
+              {/* A rota "/tasks" renderiza o MyTasks DENTRO do Layout */}
+                            <Route path="/tasks" element={<MyTasks />} />
+              {/* A rota "/settings" renderiza o Settings DENTRO do Layout */} 
+                         {" "}
+              {/* <Route path='/settings' element={<Settings />} /> */}         
+               {" "}
+            </Route>
+                     {" "}
           </Routes>
+                 {" "}
         </div>
+             {" "}
       </Router>
+         {" "}
     </>
   );
 }

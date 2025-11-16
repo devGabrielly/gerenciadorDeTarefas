@@ -5,11 +5,25 @@ import { RootState } from "./store";
 interface Task {
   _id: string;
   title: string;
+  description?: string;
+  deadline?: string;
   completed: boolean;
+  priority?: string;
+}
+
+interface CreateTaskData {
+  title: string;
+  description?: string;
+  deadline?: string;
+  priority?: string;
+}
+
+interface UpdateTaskData {
+  taskId: string;
+  taskData: Partial<Task>;
 }
 
 interface TaskState {
-  // Armazena não apenas o status das tarefas, mas também o status da comunicação com a API.
   tasks: Task[];
   isError: boolean;
   isSuccess: boolean;
@@ -18,7 +32,6 @@ interface TaskState {
 }
 
 const initialState: TaskState = {
-  // Estado inicial, quando o aplicativo for carregado pela primeira vez
   tasks: [],
   isError: false,
   isSuccess: false,
@@ -26,7 +39,22 @@ const initialState: TaskState = {
   message: "",
 };
 
-export const getTasks = createAsyncThunk<Task[], void, { state: RootState }>( // Obter terafas do usuário
+export const createTask = createAsyncThunk<
+  Task,
+  CreateTaskData,
+  { state: RootState }
+>("tasks/create", async (taskData, thunkAPI) => {
+  try {
+    const token = thunkAPI.getState().auth.user.token;
+    return await taskService.createTask(taskData, token);
+  } catch (error: any) {
+    const message =
+      error.response?.data?.message || error.message || error.toString();
+    return thunkAPI.rejectWithValue(message);
+  }
+});
+
+export const getTasks = createAsyncThunk<Task[], void, { state: RootState }>(
   "tasks/getAll",
   async (_, thunkAPI) => {
     try {
@@ -45,28 +73,11 @@ export const getTasks = createAsyncThunk<Task[], void, { state: RootState }>( //
   }
 );
 
-export const createTask = createAsyncThunk<
-  Task,
-  { title: string },
-  { state: RootState }
->("tasks/create", async (taskData, thunkAPI) => {
-  // Criar nova tarefa
-  try {
-    const token = thunkAPI.getState().auth.user.token;
-    return await taskService.createTask(taskData, token);
-  } catch (error: any) {
-    const message =
-      error.response?.data?.message || error.message || error.toString();
-    return thunkAPI.rejectWithValue(message);
-  }
-});
-
 export const updateTask = createAsyncThunk<
   Task,
-  { taskId: string; taskData: any },
+  UpdateTaskData,
   { state: RootState }
 >("tasks/update", async ({ taskId, taskData }, thunkAPI) => {
-  // Atualizar tarefa
   try {
     const token = thunkAPI.getState().auth.user.token;
     return await taskService.updateTask(taskId, taskData, token);
@@ -82,7 +93,6 @@ export const deleteTask = createAsyncThunk<
   string,
   { state: RootState }
 >("tasks/delete", async (taskId, thunkAPI) => {
-  // Deletar tarefa
   try {
     const token = thunkAPI.getState().auth.user.token;
     return await taskService.deleteTask(taskId, token);
@@ -94,25 +104,22 @@ export const deleteTask = createAsyncThunk<
 });
 
 export const taskSlice = createSlice({
-  // Criação do slice
   name: "task",
   initialState,
   reducers: {
-    // Limpa o status ao fazer logout
     reset: (state) => initialState,
   },
   extraReducers: (builder) => {
-    // 1. TODOS OS 'addCase' VÊM PRIMEIRO
     builder.addCase(getTasks.fulfilled, (state, action) => {
       state.isLoading = false;
       state.isSuccess = true;
-      state.tasks = action.payload; // Armazena a lista de tarefas
+      state.tasks = action.payload;
     });
 
     builder.addCase(createTask.fulfilled, (state, action) => {
       state.isLoading = false;
       state.isSuccess = true;
-      state.tasks.unshift(action.payload); // Adiciona a nova tarefa à lista
+      state.tasks.unshift(action.payload);
     });
 
     builder.addCase(updateTask.fulfilled, (state, action) => {
@@ -129,7 +136,6 @@ export const taskSlice = createSlice({
       state.tasks = state.tasks.filter((task) => task._id !== action.payload);
     });
 
-    // 2. TODOS OS 'addMatcher' VÊM DEPOIS
     builder.addMatcher(
       (action) => action.type.endsWith("/pending"),
       (state) => {
