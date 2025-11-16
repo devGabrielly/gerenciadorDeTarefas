@@ -1,8 +1,9 @@
-import React, { useEffect, useMemo } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { AppDispatch, RootState } from "../redux/store";
-import { getTasks, deleteTask, updateTask, reset } from "../redux/taskSlice";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../redux/store";
+import { deleteTask, updateTask } from "../redux/taskSlice";
 import "../styles/TaskWidget.scss";
+import "../styles/MyTasks.scss";
 
 interface Task {
   _id: string;
@@ -10,6 +11,7 @@ interface Task {
   description?: string;
   deadline?: string;
   completed: boolean;
+  priority?: string;
 }
 
 interface TaskItemProps {
@@ -18,115 +20,101 @@ interface TaskItemProps {
 
 const TaskItem: React.FC<TaskItemProps> = ({ task }) => {
   const dispatch = useDispatch<AppDispatch>();
+  const [isEditingDescription, setIsEditingDescription] = useState(false);
+  const [description, setDescription] = useState(task.description || "");
 
   const onDelete = () => {
-    dispatch(deleteTask(task._id));
+    if (window.confirm("Tem certeza que deseja deletar esta tarefa?")) {
+      dispatch(deleteTask(task._id));
+    }
   };
+
   const onToggle = () => {
     dispatch(
       updateTask({ taskId: task._id, taskData: { completed: !task.completed } })
     );
   };
 
-  // Formata a data
+  const handleSaveDescription = () => {
+    dispatch(
+      updateTask({
+        taskId: task._id,
+        taskData: { description: description },
+      })
+    );
+    setIsEditingDescription(false);
+  };
+
+  const handleCancelEdit = () => {
+    setDescription(task.description || "");
+    setIsEditingDescription(false);
+  };
+
   const formattedDeadline = task.deadline
     ? new Date(task.deadline).toLocaleDateString("pt-BR", { timeZone: "UTC" })
     : "";
 
-  return (
-    <div className="task-item">
-      <div>
-        <h4
-          style={{
-            textDecoration: task.completed ? "line-through" : "none",
-            color: task.completed ? "#888" : "#333",
-          }}
-        >
-          {task.title}
-        </h4>
-        <div className="task-details">
-          {task.description && <p>{task.description}</p>}
-          {task.deadline && <span>Prazo: {formattedDeadline}</span>}
-        </div>
-      </div>
-
-      <div className="task-item-buttons">
-        <button
-          onClick={onToggle}
-          className={task.completed ? "btn-uncomplete" : "btn-complete"}
-        >
-          {task.completed ? "Refazer" : "Concluir"}
-        </button>
-        <button onClick={onDelete} className="btn-delete">
-          Deletar
-        </button>
-      </div>
-    </div>
-  );
-};
-
-// --- Componente da LISTA de Tarefas ---
-const TaskList = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const { tasks, isLoading, isError, message } = useSelector(
-    (state: RootState) => state.task
-  );
-
-  useEffect(() => {
-    if (isError) alert(message);
-    dispatch(getTasks());
-    return () => {
-      dispatch(reset());
+  const getPriorityInfo = () => {
+    const priority = task.priority || "normal";
+    const priorityMap: Record<string, { text: string; class: string }> = {
+      high: { text: "ALTA PRIORIDADE", class: "high" },
+      normal: { text: "PRIORIDADE NORMAL", class: "normal" },
+      low: { text: "BAIXA PRIORIDADE", class: "low" },
     };
-  }, [dispatch, isError, message]);
+    return priorityMap[priority] || priorityMap.normal;
+  };
 
-  // Filtra as tarefas em duas listas
-  const pendingTasks = useMemo(
-    () => tasks.filter((task) => !task.completed),
-    [tasks]
-  );
-  const completedTasks = useMemo(
-    () => tasks.filter((task) => task.completed),
-    [tasks]
-  );
-
-  if (isLoading) {
-    return <h2>Carregando tarefas...</h2>;
-  }
+  const priorityInfo = getPriorityInfo();
 
   return (
-    <div className="task-list">
-      <h3 className="task-list-heading">Tarefas Pendentes</h3>
-      {pendingTasks.length > 0 ? (
-        <div>
-          {pendingTasks.map((task) => (
-            <TaskItem key={task._id} task={task} />
-          ))}
+    <>
+      <div className="task-card">
+        <div className="card-header">
+          <span className={`priority ${priorityInfo.class}`}>
+            {priorityInfo.text}
+          </span>
         </div>
-      ) : (
-        !isLoading && (
-          <div className="task-list-empty">
-            <p>Você não tem tarefas pendentes.</p>
-          </div>
-        )
-      )}
 
-      <h3 className="task-list-heading">Tarefas Concluídas</h3>
-      {completedTasks.length > 0 ? (
-        <div>
-          {completedTasks.map((task) => (
-            <TaskItem key={task._id} task={task} />
-          ))}
-        </div>
-      ) : (
-        !isLoading && (
-          <div className="task-list-empty">
-            <p>Nenhuma tarefa concluída ainda.</p>
+        <h4 className="card-title">{task.title}</h4>
+
+        {task.deadline && <p className="card-date">{formattedDeadline}</p>}
+
+        {task.description && !isEditingDescription && (
+          <div className="card-description">
+            <p>{task.description}</p>
           </div>
-        )
-      )}
-    </div>
+        )}
+
+        {isEditingDescription && (
+          <div className="card-description-edit">
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="description-textarea"
+            />
+            <div className="edit-buttons">
+              <button onClick={handleSaveDescription} className="btn-save">
+                Salvar
+              </button>
+              <button onClick={handleCancelEdit} className="btn-cancel">
+                Cancelar
+              </button>
+            </div>
+          </div>
+        )}
+
+        <div className="task-item-buttons">
+          <button
+            onClick={onToggle}
+            className={task.completed ? "btn-uncomplete" : "btn-complete"}
+          >
+            {task.completed ? "Refazer" : "Concluir"}
+          </button>
+          <button onClick={onDelete} className="btn-delete">
+            Deletar
+          </button>
+        </div>
+      </div>
+    </>
   );
 };
-
-export default TaskList;

@@ -19,7 +19,7 @@ export const getTasks = async (req: AuthRequest, res: Response) => {
 
 // 2. Função CREATETASK
 export const createTask = async (req: AuthRequest, res: Response) => {
-  const { title, description, deadline } = req.body;
+  const { title, description, deadline, priority } = req.body;
 
   if (!title) {
     return res.status(400).json({ message: "O título é obrigatório." });
@@ -28,8 +28,9 @@ export const createTask = async (req: AuthRequest, res: Response) => {
     const task = await Task.create({
       user: req.user.id,
       title,
-      description,
+      description: description || "",
       deadline,
+      priority: priority || "normal",
     });
     res.status(201).json(task);
   } catch (error) {
@@ -58,7 +59,7 @@ export const updateTask = async (req: AuthRequest, res: Response) => {
   }
 };
 
-// 4. Função DELETETASK (estava correta)
+// 4. Função DELETETASK
 export const deleteTask = async (req: AuthRequest, res: Response) => {
   try {
     const task = await Task.findById(req.params.id);

@@ -2,19 +2,25 @@ import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import taskService from "../services/taskService";
 import { RootState } from "./store";
 
-// --- TIPOS ---
 interface Task {
   _id: string;
   title: string;
   description?: string;
   deadline?: string;
   completed: boolean;
+  priority?: string;
 }
 
 interface CreateTaskData {
   title: string;
   description?: string;
   deadline?: string;
+  priority?: string;
+}
+
+interface UpdateTaskData {
+  taskId: string;
+  taskData: Partial<Task>;
 }
 
 interface TaskState {
@@ -25,7 +31,6 @@ interface TaskState {
   message: string;
 }
 
-// --- ESTADO INICIAL ---
 const initialState: TaskState = {
   tasks: [],
   isError: false,
@@ -41,7 +46,7 @@ export const createTask = createAsyncThunk<
 >("tasks/create", async (taskData, thunkAPI) => {
   try {
     const token = thunkAPI.getState().auth.user.token;
-    return await taskService.createTask(taskData, token); // Envia os dados
+    return await taskService.createTask(taskData, token);
   } catch (error: any) {
     const message =
       error.response?.data?.message || error.message || error.toString();
@@ -70,7 +75,7 @@ export const getTasks = createAsyncThunk<Task[], void, { state: RootState }>(
 
 export const updateTask = createAsyncThunk<
   Task,
-  { taskId: string; taskData: any },
+  UpdateTaskData,
   { state: RootState }
 >("tasks/update", async ({ taskId, taskData }, thunkAPI) => {
   try {

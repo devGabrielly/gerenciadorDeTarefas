@@ -1,5 +1,3 @@
-// src/controllers/authController.ts
-
 import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -28,10 +26,16 @@ export const registerUser = async (req: Request, res: Response) => {
     });
 
     if (user) {
+      // ← GERA O TOKEN TAMBÉM NO REGISTRO
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET!, {
+        expiresIn: "30d",
+      });
+
       res.status(201).json({
         _id: user._id,
         name: user.name,
         email: user.email,
+        token: token, // ← AGORA ENVIA O TOKEN
       });
     } else {
       res.status(400).json({ message: "Dados de usuário inválidos." });
@@ -52,17 +56,15 @@ export const loginUser = async (req: Request, res: Response) => {
     // Se o usuário existir e a senha estiver correta...
     if (user && (await bcrypt.compare(password, user.password))) {
       // Gera o token JWT
-      const token = jwt.sign(
-        { id: user._id }, // O dado que queremos guardar no token
-        process.env.JWT_SECRET!, // A chave secreta do .env
-        { expiresIn: "1d" } // Expira em 1 dia
-      );
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET!, {
+        expiresIn: "30d",
+      });
 
       res.json({
         _id: user._id,
         name: user.name,
         email: user.email,
-        token: token, // Envia o token para o frontend
+        token: token,
       });
     } else {
       res.status(401).json({ message: "Email ou senha inválidos." });

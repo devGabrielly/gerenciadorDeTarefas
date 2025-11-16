@@ -1,10 +1,7 @@
-// src/middleware/authMiddleware.ts
-
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { User } from "../models/UserModel";
 
-// Estendemos a interface Request do Express para adicionar a propriedade 'user'
 interface AuthRequest extends Request {
   user?: any;
 }
